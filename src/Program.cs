@@ -9,15 +9,19 @@ namespace Blast
 {
     class Program
     {
+        private static readonly Option<string> rawInputOption = new(new[] { "-i", "--input" }, "Raw input, optional");
+        private static readonly Option<FileInfo> fileInputOption = new Option<FileInfo>(new[] { "-f", "--file" }, "File to decode").ExistingOnly();
+        private static readonly Option<EncoderType> typeOption = new(new[] { "-t", "--type" }, "Type of decoder to use, optional");
+
         static void Main(string[] args)
         {
             Command decodeCommand = new("decode", "Decodes encoded file")
             {
-                new Option<string>(new[] { "-i" }, "n"),
-                new Option<FileInfo>(new[] { "-f", "--file" }, "File to decode").ExistingOnly(),
-                new Option<EncoderType>(new[] { "-t", "--type" }, "Type of decoder to use, optional")
+                rawInputOption,
+                fileInputOption,
+                typeOption
             };
-            decodeCommand.Handler = CommandHandler.Create<string, FileInfo, EncoderType>((i, file, type) =>
+            decodeCommand.SetHandler((i, file, type) =>
             {
                 if (!string.IsNullOrEmpty(i))
                 {
@@ -28,15 +32,15 @@ namespace Blast
                     string outputPath = file.FullName[..^(file.FullName.Split(".").Last().Length + 1)] + ".txt";
                     File.WriteAllText(outputPath, GetEncoder(type).Decode(File.ReadAllText(file.FullName)));
                 }
-            });
+            }, rawInputOption, fileInputOption, typeOption);
 
             Command encodeCommand = new("encode", "Encodes file")
             {
-                new Option<string>(new[] { "-i" }, "n"),
-                new Option<FileInfo>(new[] { "-f", "--file" }, "File to encode").ExistingOnly(),
-                new Option<EncoderType>(new[] { "-t", "--type" }, "Type of encoder to use, optional")
+                rawInputOption,
+                fileInputOption,
+                typeOption
             };
-            encodeCommand.Handler = CommandHandler.Create<string, FileInfo, EncoderType>((i, file, type) =>
+            encodeCommand.SetHandler((i, file, type) =>
             {
                 if (!string.IsNullOrEmpty(i))
                 {
@@ -47,7 +51,7 @@ namespace Blast
                     string outputPath = file.FullName[..^(file.FullName.Split(".").Last().Length + 1)] + ".blst";
                     File.WriteAllText(outputPath, GetEncoder(type).Encode(File.ReadAllText(file.FullName)));
                 }
-            });
+            }, rawInputOption, fileInputOption, typeOption);
 
             RootCommand rootCommand = new()
             {
