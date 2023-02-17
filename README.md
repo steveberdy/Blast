@@ -1,7 +1,9 @@
 # Blast
 Weird encoders that I've created.
 
-The output for these encodings are indeterministic, while the decoding output is deterministic. There are many encoded outputs for one input, but always the same decoded output for inputs. 
+The output for these encodings are indeterministic, while the decoding output is deterministic. There are many encoded outputs for one input, but always the same decoded output for inputs.
+
+I originally created this in Java while I was sitting bored at school, but I completly rewrote it in C#. Feel free to contribute.
 
 ## Building
 
