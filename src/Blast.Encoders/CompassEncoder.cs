@@ -3,13 +3,14 @@ using System.Linq;
 
 namespace Blast.Encoders
 {
-    public class CompassEncoder : BlastEncoder
+    public class CompassEncoder : IEncoder
     {
         private static readonly string characters = " abcdefghijklmnopqrstuvwyz0123456789";
         private static readonly string numericalCharacters = "0123456789";
         private readonly string symbols = "!@#";
         private readonly string primarySeparator = "-";
         private readonly string secondarySeparator = ".";
+        private readonly Random random = new();
 
         /// <summary>
         /// Creates a <see cref="CompassEncoder" />
@@ -33,7 +34,7 @@ namespace Blast.Encoders
             secondarySeparator = key[^2].ToString();
         }
 
-        public override string Encode(string text)
+        public string Encode(string text)
         {
             string full = string.Empty;
             string character;
@@ -63,10 +64,10 @@ namespace Blast.Encoders
                 full += character;
             }
 
-            return base.Encode(full);
+            return full;
         }
 
-        public override string Decode(string text)
+        public string Decode(string text)
         {
             string[] slices = text.Split(primarySeparator);
 
@@ -95,7 +96,7 @@ namespace Blast.Encoders
                 }
             }
 
-            return base.Decode(full);
+            return full;
         }
 
         private string Transform(int value)

@@ -4,9 +4,11 @@ using System.Collections.Generic;
 
 namespace Blast.Encoders
 {
-    public partial class InsertEncoder : BlastEncoder
+    public partial class InsertEncoder : IEncoder
     {
-        public override string Encode(string text)
+        private readonly Random random = new();
+
+        public string Encode(string text)
         {
             text = text.Replace(",", "").Replace("!", "").Replace(".", "");
             IEnumerable<string> chunks = text.Split(" ");
@@ -21,10 +23,10 @@ namespace Blast.Encoders
                 }
             }
 
-            return base.Encode(string.Join(" ", outChunks));
+            return string.Join(" ", outChunks);
         }
 
-        public override string Decode(string text)
+        public string Decode(string text)
         {
             IEnumerable<string> chunks = text.Split(" ");
             List<string> outChunks = new();
@@ -36,7 +38,7 @@ namespace Blast.Encoders
                 chunks = chunks.Skip(chunk.Length + 1);
             }
 
-            return base.Decode(string.Join(" ", outChunks));
+            return string.Join(" ", outChunks);
         }
     }
 }

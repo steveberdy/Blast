@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 namespace Blast.Encoders
 {
-    public class CompassDeepEncoder : BlastEncoder
+    public class CompassDeepEncoder : IEncoder
     {
         private static readonly string[] outCombos = { "!!", "!@", "!#", "@!", "@@",
-                    "@#", "#!", "#@", "##", ".@", ".#", "!.@", "!.#", "@.@",
-                    "@.#", "#.@", "#.#", "!", "@", "#", "|" };
-        private const string outChars = "0123456789abcdefghijk";
+                    "@#", "#!", "#@", "##", ".!", ".@", ".#", "!.@", "!.#", "@.@",
+                    "@.#", "#.@", "#.#", "!", "@", "#", "-" };
+        private const string outChars = "0123456789abcdefghijkl";
         private readonly static CompassEncoder subEncoder = new();
 
         /// <summary>
@@ -19,7 +19,7 @@ namespace Blast.Encoders
         /// The encoded text.
         /// </returns>
         /// <param name="text">Text to encode</param>
-        public override string Encode(string text)
+        public string Encode(string text)
         {
             text = subEncoder.Encode(text);
             string enc = string.Empty;
@@ -28,15 +28,16 @@ namespace Blast.Encoders
             {
                 for (int c = 0; c < outCombos.Length; c++)
                 {
-                    if (text.Length >= outCombos[c].Length && text[..outCombos[c].Length] == outCombos[c])
+                    if (text.StartsWith(outCombos[c]))
                     {
                         text = text[outCombos[c].Length..];
                         enc += outChars[c];
+                        break;
                     }
                 }
             }
 
-            return base.Encode(enc);
+            return enc;
         }
 
         /// <summary>
@@ -49,7 +50,7 @@ namespace Blast.Encoders
         /// The decoded text.
         /// </returns>
         /// <param name="raw">Raw encoding</param>
-        public override string Decode(string raw)
+        public string Decode(string raw)
         {
             string dec = string.Empty;
 
@@ -58,7 +59,7 @@ namespace Blast.Encoders
                 dec += outCombos[outChars.IndexOf(raw[i])];
             }
 
-            return base.Decode(subEncoder.Decode(dec));
+            return subEncoder.Decode(dec);
         }
     }
 }
