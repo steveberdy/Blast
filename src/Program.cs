@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.CommandLine;
-using System.CommandLine.Invocation;
 using Blast.Encoders;
 
 namespace Blast
@@ -29,7 +27,7 @@ namespace Blast
                 }
                 else
                 {
-                    string outputPath = file.FullName[..^(file.FullName.Split(".").Last().Length + 1)] + ".txt";
+                    string outputPath = Path.GetFileNameWithoutExtension(file.FullName) + ".txt";
                     File.WriteAllText(outputPath, GetEncoder(type).Decode(File.ReadAllText(file.FullName)));
                 }
             }, rawInputOption, fileInputOption, typeOption);
@@ -48,7 +46,7 @@ namespace Blast
                 }
                 else
                 {
-                    string outputPath = file.FullName[..^(file.FullName.Split(".").Last().Length + 1)] + ".blst";
+                    string outputPath = Path.GetFileNameWithoutExtension(file.FullName) + ".blst";
                     File.WriteAllText(outputPath, GetEncoder(type).Encode(File.ReadAllText(file.FullName)));
                 }
             }, rawInputOption, fileInputOption, typeOption);
